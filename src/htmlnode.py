@@ -13,6 +13,6 @@ class HTMLNode():
             return return_string
         for prop in self.props:
             return_string += f'{prop}="{self.props[prop]}" '
-        return return_string
+        return return_string.strip()
     def __repr__(self):
         return f"Tag:{self.tag}, Value:{self.value}, Children:{self.children}, Props:{self.props}"

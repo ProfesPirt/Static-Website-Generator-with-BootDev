@@ -13,7 +13,7 @@ class TestHTMLNode(unittest.TestCase):
         node1 = HTMLNode("div")
         node2 = HTMLNode("body", "This is a body text",[node1,],{"id": "burger"})
         self.assertEqual(node1.props_to_html(),"")
-        self.assertEqual(node2.props_to_html(), 'id="burger" ')
+        self.assertEqual(node2.props_to_html(), 'id="burger"')
     def test_to_html(self):
         node = HTMLNode("div")
         self.assertRaises(NotImplementedError, node.to_html)
