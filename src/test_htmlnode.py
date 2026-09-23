@@ -17,3 +17,6 @@ class TestHTMLNode(unittest.TestCase):
     def test_to_html(self):
         node = HTMLNode("div")
         self.assertRaises(NotImplementedError, node.to_html)
+
+if __name__ == "__main__":
+    unittest.main()
