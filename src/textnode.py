@@ -21,7 +21,7 @@ class TextNode():
         if not self.url == other.url:
             return False
         return True
-    def __repr__(self) -> string:
+    def __repr__(self) -> str:
         return f"TextNode({self.text}, {self.text_type}, {self.url})"
 def text_node_to_html_node(text_node: "TextNode") -> "LeafNode":
     match text_node.text_type:
