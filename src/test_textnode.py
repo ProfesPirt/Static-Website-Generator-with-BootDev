@@ -1,5 +1,5 @@
 import unittest
-from textnode import TextNode, TextType, text_node_to_html_node
+from textnode import TextNode, TextType, text_node_to_html_node, split_nodes_delimiter
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -25,5 +25,13 @@ class TestTextNode(unittest.TestCase):
         )
         self.assertEqual("This is a text node", result_leaf_node1.props["alt"])
         self.assertEqual("project/images", result_leaf_node1.props["src"])
+    def test_split_nodes_delimiter(self):
+        nodes = [TextNode("aaaa__aaaa__aaa",TextType.TEXT)]
+        nodes_2 = [TextNode("aaaa__aaaa__aaa__",TextType.TEXT)]
+        result = split_nodes_delimiter(nodes, "__", TextType.ITALIC)
+        self.assertEqual(result[0].text_type,TextType.TEXT)
+        self.assertEqual(result[1].text_type, TextType.ITALIC)
+        self.assertEqual(result[2].text_type,TextType.TEXT)
+        self.assertRaises(Exception, split_nodes_delimiter, nodes_2,"__", TextType.ITALIC)
 if __name__ == "__main__":
     unittest.main()
