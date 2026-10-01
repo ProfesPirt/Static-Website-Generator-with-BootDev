@@ -1,5 +1,5 @@
 import unittest
-from textnode import TextNode, TextType, text_node_to_html_node, split_nodes_delimiter
+from textnode import TextNode, TextType, split_nodes_image, text_node_to_html_node, split_nodes_delimiter, split_nodes_link
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -33,5 +33,21 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(result[1].text_type, TextType.ITALIC)
         self.assertEqual(result[2].text_type,TextType.TEXT)
         self.assertRaises(Exception, split_nodes_delimiter, nodes_2,"__", TextType.ITALIC)
+    def test_split_nodes_link(self):
+        input = [TextNode("Here have a link [right here](https://www.yourmom.com) and thats all folks", TextType.TEXT)]
+        result = [
+           TextNode("Here have a link ", TextType.TEXT),
+           TextNode("right here", TextType.LINK, "https://www.yourmom.com"),
+           TextNode(" and thats all folks", TextType.TEXT)
+        ]
+        self.assertListEqual(result, split_nodes_link(input))
+    def test_split_nodes_image(self):
+        input = [TextNode("Here have a image ![yourmom doing a dance](https://www.yourmom.com) and thats all folks", TextType.TEXT)]
+        result = [
+            TextNode("Here have a image ", TextType.TEXT),
+            TextNode("yourmom doing a dance", TextType.IMAGE, "https://www.yourmom.com"),
+            TextNode(" and thats all folks", TextType.TEXT)
+        ]
+        self.assertListEqual(result, split_nodes_image(input))
 if __name__ == "__main__":
     unittest.main()

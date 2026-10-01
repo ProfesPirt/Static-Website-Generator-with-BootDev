@@ -1,5 +1,6 @@
 from enum import Enum
 from leafnode import LeafNode
+from parsing_markdown import extract_markdown_link, extract_markdown_images
 class TextType(Enum):
     TEXT = "plaintext"
     BOLD = "bold"
@@ -54,4 +55,32 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                 new_nodes.append(TextNode(string_text[i],text_type))
                 continue
             new_nodes.append(TextNode(string_text[i], TextType.TEXT))
+    return new_nodes
+def split_nodes_link(old_nodes):
+    new_nodes = []
+    for old_node in old_nodes:
+        list_of_mdlinks = extract_markdown_link(old_node.text)
+        if old_node.text_type is not TextType.TEXT or not list_of_mdlinks:
+            new_nodes.append(old_node)
+        for link_text, url in list_of_mdlinks:
+             text = old_node.text.split(f"[{link_text}]({url})", 1)
+             if text[0] != "":
+                 new_nodes.append(TextNode(text[0], TextType.TEXT))
+             new_nodes.append(TextNode(link_text, TextType.LINK, url))
+             if text[1] != "":
+                 new_nodes.append(TextNode(text[1], TextType.TEXT))
+    return new_nodes
+def split_nodes_image(old_nodes):
+    new_nodes = []
+    for old_node in old_nodes:
+        list_of_mdlinks = extract_markdown_images(old_node.text)
+        if old_node.text_type is not TextType.TEXT or not list_of_mdlinks:
+            new_nodes.append(old_node)
+        for link_text, url in list_of_mdlinks:
+             text = old_node.text.split(f"![{link_text}]({url})", 1)
+             if text[0] != "":
+                 new_nodes.append(TextNode(text[0], TextType.TEXT))
+             new_nodes.append(TextNode(link_text, TextType.IMAGE, url))
+             if text[1] != "":
+                 new_nodes.append(TextNode(text[1], TextType.TEXT))
     return new_nodes
