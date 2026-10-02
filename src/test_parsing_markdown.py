@@ -1,6 +1,6 @@
 import unittest
 import textnode
-from parsing_markdown import extract_markdown_images, extract_markdown_link, text_to_textnodes
+from parsing_markdown import extract_markdown_images, extract_markdown_link, text_to_textnodes, markdown_to_blocks
 class TestParsingMarkdown(unittest.TestCase):
     def test_extract_markdown_images(self):
         result = extract_markdown_images("![This is alt text](https://www.yourmom.com)")
@@ -28,6 +28,18 @@ class TestParsingMarkdown(unittest.TestCase):
         self.assertEqual(result[1], answer[1])
         self.assertEqual(result[2], answer[2])
         self.assertListEqual(result, text_to_textnodes("This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"))
+    def test_markdown_to_blocks(self):
+        result = markdown_to_blocks("""
+This is **bolded** paragraph
 
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+""")
+        self.assertEqual("This is **bolded** paragraph", result[0])
+        self.assertEqual("""This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line""", result[1])
 if __name__ == "__main__":
     unittest.main()

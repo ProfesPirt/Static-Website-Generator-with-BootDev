@@ -13,3 +13,5 @@ def text_to_textnodes(text):
     if "`" in text:
         nodes = textnode.split_nodes_delimiter(nodes, "`", textnode.TextType.CODE)
     return textnode.split_nodes_link(textnode.split_nodes_image(nodes))
+def markdown_to_blocks(document):
+    return [block.strip() for block in document.split("\n\n")]
