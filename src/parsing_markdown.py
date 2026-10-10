@@ -9,8 +9,10 @@ def extract_markdown_images(text):
     return re.findall(r"\!\[(.*?)\]\((.*?)\)", text)
 def extract_markdown_link(text):
     return re.findall(r"(?<!\!)\[(.*?)\]\((.*?)\)", text)
+
 def text_to_textnodes(text):
     nodes = [textnode.TextNode(text,textnode.TextType.TEXT)]
+    print(nodes)
     if "**" in text:
         nodes = textnode.split_nodes_delimiter(nodes, "**", textnode.TextType.BOLD)
     if "_" in text:
@@ -18,6 +20,7 @@ def text_to_textnodes(text):
     if "`" in text:
         nodes = textnode.split_nodes_delimiter(nodes, "`", textnode.TextType.CODE)
     return textnode.split_nodes_link(textnode.split_nodes_image(nodes))
+
 def markdown_to_blocks(document):
     return [block.strip() for block in document.split("\n\n") if block != ""]
 
@@ -37,12 +40,20 @@ def text_to_children(text, blocktype):
             children_of_children.append(leafnode)
     elif blocktype is blocks.BlockType.UNORDERED_LIST:
         for line in markdown_to_string(text, blocktype).split("\n"):
-            leafnode = LeafNode("li", line)
-            children_of_children.append(leafnode)
+            textchildren = text_to_textnodes(line)
+            children = []
+            for text in textchildren:
+                children.append(textnode.text_node_to_html_node(text))
+            parentnode = ParentNode("li", children)
+            children_of_children.append(parentnode)
     else:
         for line in markdown_to_string(text, blocktype).split("\n"):
-            leafnode = LeafNode("li", line)
-            children_of_children.append(leafnode)
+            textchildren = text_to_textnodes(line)
+            children = []
+            for text in textchildren:
+                children.append(textnode.text_node_to_html_node(text))
+                parentnode = ParentNode("li", children)
+                children_of_children.append(parentnode)
     return children_of_children
 def markdown_to_string(markdown, blocktype):
     new_string = ""
@@ -50,9 +61,9 @@ def markdown_to_string(markdown, blocktype):
         list_of_markdown = markdown.split("\n")
         for line in list_of_markdown:
             if line == list_of_markdown[-1]:
-                new_string += line[max(line.count(">", 0, 1), line.count("> ", 0, 2)):]
+                new_string += line[1:].strip()
                 return new_string
-            new_string += line[max(line.count(">", 0, 1), line.count("> ", 0, 2)):] + "\n"
+            new_string += line[1:].strip() + "\n"
     if blocktype is blocks.BlockType.UNORDERED_LIST:
         list_of_markdown = markdown.split("\n")
         for line in list_of_markdown:

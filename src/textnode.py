@@ -63,13 +63,18 @@ def split_nodes_link(old_nodes):
         list_of_mdlinks = extract_markdown_link(old_node.text)
         if old_node.text_type is not TextType.TEXT or not list_of_mdlinks:
             new_nodes.append(old_node)
+            continue
+        og_text = old_node.text
         for link_text, url in list_of_mdlinks:
-             text = old_node.text.split(f"[{link_text}]({url})", 1)
-             if text[0] != "":
-                 new_nodes.append(TextNode(text[0], TextType.TEXT))
-             new_nodes.append(TextNode(link_text, TextType.LINK, url))
-             if text[1] != "":
-                 new_nodes.append(TextNode(text[1], TextType.TEXT))
+            text = og_text.split(f"[{link_text}]({url})", 1)
+            if text[0] != "":
+                new_nodes.append(TextNode(text[0], TextType.TEXT))
+            new_nodes.append(TextNode(link_text, TextType.LINK, url))
+            og_text = text[1]
+        if og_text != "":
+            new_nodes.append(TextNode(og_text,TextType.TEXT))
+
+             
     return new_nodes
 def split_nodes_image(old_nodes):
     new_nodes = []
@@ -77,11 +82,15 @@ def split_nodes_image(old_nodes):
         list_of_mdlinks = extract_markdown_images(old_node.text)
         if old_node.text_type is not TextType.TEXT or not list_of_mdlinks:
             new_nodes.append(old_node)
+            continue
+        og_text = old_node.text
         for link_text, url in list_of_mdlinks:
-             text = old_node.text.split(f"![{link_text}]({url})", 1)
-             if text[0] != "":
-                 new_nodes.append(TextNode(text[0], TextType.TEXT))
-             new_nodes.append(TextNode(link_text, TextType.IMAGE, url))
-             if text[1] != "":
-                 new_nodes.append(TextNode(text[1], TextType.TEXT))
+            text = og_text.split(f"![{link_text}]({url})", 1)
+            if text[0] != "":
+                new_nodes.append(TextNode(text[0], TextType.TEXT))
+            new_nodes.append(TextNode(link_text, TextType.IMAGE, url))
+            og_text = text[1]
+        if og_text != "":
+            new_nodes.append(TextNode(og_text,TextType.TEXT))
+
     return new_nodes
