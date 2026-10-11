@@ -33,8 +33,8 @@ def generate_page(from_path, template_path, dest_path):
     contents_md = parsing_markdown.markdown_to_html_node(contents_md).to_html()
     contents_html = contents_html.replace("{{ Title }}", title)
     contents_html = contents_html.replace("{{ Content }}", contents_md)
-    contents_html = contents_html.replace('href"/',f'href="{basepath}')
-    contents_html = contents_html.replace('src"/',f'src="{basepath}')
+    contents_html = contents_html.replace('href="/',f'href="{basepath}')
+    contents_html = contents_html.replace('src="/',f'src="{basepath}')
     with open(dest_path,"w+") as file:
         dir_name, file_name = os.path.split(dest_path)
         file.write(contents_html)
