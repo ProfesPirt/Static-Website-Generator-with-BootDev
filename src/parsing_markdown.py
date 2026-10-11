@@ -12,7 +12,6 @@ def extract_markdown_link(text):
 
 def text_to_textnodes(text):
     nodes = [textnode.TextNode(text,textnode.TextType.TEXT)]
-    print(nodes)
     if "**" in text:
         nodes = textnode.split_nodes_delimiter(nodes, "**", textnode.TextType.BOLD)
     if "_" in text:
@@ -91,7 +90,6 @@ def markdown_to_html_node(document):
             htmlblock = ParentNode(f"h{block.count("#",0,6)}", text_to_children(block[block.count("#",0,6)+1:], blocktype))
             children.append(htmlblock)
         elif blocktype is blocks.BlockType.PARAGRAPH:
-            print(block)
             htmlblock = ParentNode("p", text_to_children(block.replace("\n"," "), blocktype))
             children.append(htmlblock)
         elif blocktype is blocks.BlockType.QUOTE:

@@ -2,6 +2,10 @@ from textnode import TextNode
 import shutil
 import os
 import parsing_markdown
+import sys
+
+cmdline_args = sys.argv
+basepath = cmdline_args[1] if len(cmdline_args) == 2 else "/"
 
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
     if not os.path.exists(dest_dir_path):
@@ -29,12 +33,14 @@ def generate_page(from_path, template_path, dest_path):
     contents_md = parsing_markdown.markdown_to_html_node(contents_md).to_html()
     contents_html = contents_html.replace("{{ Title }}", title)
     contents_html = contents_html.replace("{{ Content }}", contents_md)
+    contents_html = contents_html.replace('href"/',f'href="{basepath}')
+    contents_html = contents_html.replace('src"/',f'src="{basepath}')
     with open(dest_path,"w+") as file:
         dir_name, file_name = os.path.split(dest_path)
         file.write(contents_html)
     
 def copy_static_files(source_path, dest_path, dest_cleaned= False):
-    if not dest_cleaned:
+    if not dest_cleaned and os.path.exists(dest_path):
         shutil.rmtree(dest_path)
         dest_cleaned = True
     list_of_names = os.listdir(source_path)
@@ -55,7 +61,9 @@ def extract_title(markdown):
         if block.count("#",0,2) == 1:
             return block[1:].strip()
 def main():
-    copy_static_files("./static","./public")
-    generate_pages_recursive("./content","./template.html","./public")
+    copy_static_files("./static","./docs")
+    generate_pages_recursive("./content","./template.html","./docs")
+
+
 
 main()
